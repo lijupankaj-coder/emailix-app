@@ -1,15 +1,10 @@
 import { useEmailStore } from '../store/useEmailStore';
 import CanvasBlock from './CanvasBlock';
-import { hasActiveLicense } from '../utils/licenseAccess';
-
-const WATERMARK_TILES = Array.from({ length: 30 }, (_, i) => i);
 
 export default function Canvas({ draggingId }) {
-  const { blocks, selectedId, selectBlock, viewMode, globalSettings, licenseKey, licenseInfo } = useEmailStore();
+  const { blocks, selectedId, selectBlock, viewMode, globalSettings } = useEmailStore();
 
   const emailWidth = viewMode === 'mobile' ? 375 : globalSettings.width;
-  const downloadUnlocked = hasActiveLicense(licenseKey, licenseInfo);
-  const showWatermark = blocks.length > 0 && !downloadUnlocked;
 
   return (
     <div
@@ -19,7 +14,7 @@ export default function Canvas({ draggingId }) {
     >
       <div className="canvas-scroll">
         <div
-          className={`canvas-email ${showWatermark ? 'is-watermarked' : ''}`}
+          className="canvas-email"
           style={{
             width: emailWidth,
             background: globalSettings.emailAreaColor || '#ffffff',
@@ -40,11 +35,6 @@ export default function Canvas({ draggingId }) {
                 isDragging={block.id === draggingId}
               />
             ))
-          )}
-          {showWatermark && (
-            <div className="email-watermark" aria-hidden="true">
-              {WATERMARK_TILES.map(i => <span key={i}>EMAILIX PREVIEW - PAID DOWNLOAD REQUIRED</span>)}
-            </div>
           )}
         </div>
       </div>

@@ -4,7 +4,6 @@ import { useEmailStore } from '../store/useEmailStore';
 import { generateMJML } from '../utils/mjmlGenerator';
 import PreviewModal from './PreviewModal';
 import PricingModal from './PricingModal';
-import { hasActiveLicense } from '../utils/licenseAccess';
 
 export default function Toolbar() {
   const {
@@ -15,7 +14,6 @@ export default function Toolbar() {
   const [showPreview, setShowPreview] = useState(false);
   const [previewHtml, setPreviewHtml] = useState('');
   const [showPricing, setShowPricing] = useState(false);
-  const downloadUnlocked = hasActiveLicense(licenseKey, licenseInfo);
 
   const handlePreview = async () => {
     if (!blocks.length) return showToast('Add blocks first', 'error');
@@ -144,7 +142,6 @@ export default function Toolbar() {
       {showPreview && (
         <PreviewModal
           html={previewHtml}
-          downloadUnlocked={downloadUnlocked}
           onClose={() => setShowPreview(false)}
           onExport={handleExportZip}
         />

@@ -48,7 +48,7 @@ License storage defaults to `server/data/licenses.json`. Set `LICENSE_STORE_PATH
 
 Screenshot protection:
 
-Emailix watermarks unpaid canvas and preview output so screenshots are not clean deliverables. It also blocks browser right-click, copy, print, drag, and common screenshot keyboard shortcuts where browser events are available. A web app cannot fully prevent operating system or browser-level screenshots.
+Emailix blocks browser right-click, copy, print, drag, and common screenshot keyboard shortcuts where browser events are available. A web app cannot fully prevent operating system or browser-level screenshots.
 
 ## Production
 
