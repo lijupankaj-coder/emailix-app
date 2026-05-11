@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">Emailix by Nebulix</title>
+  <desc id="desc">Email template builder social preview image.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F7F8FC"/>
+      <stop offset="100%" stop-color="#EDE9FE"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#5B21B6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="82" y="74" width="1036" height="482" rx="28" fill="#FFFFFF" stroke="#E2E4EE"/>
+  <rect x="132" y="124" width="80" height="80" rx="22" fill="url(#brand)"/>
+  <text x="172" y="174" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF">Ei</text>
+  <text x="238" y="158" font-family="Inter, Arial, sans-serif" font-size="38" font-weight="700" letter-spacing="-1.5" fill="#1A1B2E">Email<tspan fill="#7C3AED">ix</tspan></text>
+  <text x="240" y="188" font-family="JetBrains Mono, monospace" font-size="15" font-weight="500" fill="#7B7F9A">Nebulix email studio</text>
+  <text x="132" y="295" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="700" letter-spacing="-2.5" fill="#1A1B2E">Build responsive email</text>
+  <text x="132" y="360" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="700" letter-spacing="-2.5" fill="#1A1B2E">templates faster.</text>
+  <text x="132" y="420" font-family="Inter, Arial, sans-serif" font-size="24" fill="#6F7287">Drag blocks, preview, convert MJML, and export ZIP packages.</text>
+  <rect x="760" y="150" width="260" height="330" rx="18" fill="#F7F8FC" stroke="#CDD0DF"/>
+  <rect x="798" y="188" width="184" height="34" rx="7" fill="#7C3AED"/>
+  <rect x="798" y="250" width="184" height="18" rx="5" fill="#CDD0DF"/>
+  <rect x="798" y="282" width="145" height="18" rx="5" fill="#CDD0DF"/>
+  <rect x="798" y="332" width="80" height="74" rx="9" fill="#EDE9FE"/>
+  <rect x="902" y="332" width="80" height="74" rx="9" fill="#EDE9FE"/>
+  <rect x="798" y="432" width="116" height="28" rx="14" fill="#5B21B6"/>
+</svg>
