@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function PreviewModal({ html, onClose, onExport }) {
+const WATERMARK_TILES = Array.from({ length: 30 }, (_, i) => i);
+
+export default function PreviewModal({ html, downloadUnlocked = false, onClose, onExport }) {
   const iframeRef = useRef();
   const [mode, setMode] = useState('desktop');
 
@@ -9,8 +11,17 @@ export default function PreviewModal({ html, onClose, onExport }) {
     if (!doc) return;
     doc.open(); doc.write(html); doc.close();
     const style = doc.createElement('style');
-    style.textContent = 'html,body,*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}';
+    style.textContent = `html,body,*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+      .emailix-frame-watermark{position:fixed;inset:0;z-index:2147483647;pointer-events:none;display:grid;grid-template-columns:repeat(3,1fr);align-content:space-around;justify-items:center;overflow:hidden;background:rgba(255,255,255,.03)}
+      .emailix-frame-watermark span{display:block;width:260px;color:rgba(124,58,237,.24);font:800 14px Arial,sans-serif;letter-spacing:.08em;text-align:center;transform:rotate(-28deg);text-transform:uppercase}`;
     doc.head?.appendChild(style);
+    if (!downloadUnlocked) {
+      const watermark = doc.createElement('div');
+      watermark.className = 'emailix-frame-watermark';
+      watermark.setAttribute('aria-hidden', 'true');
+      watermark.innerHTML = WATERMARK_TILES.map(() => '<span>EMAILIX PREVIEW - PAID DOWNLOAD REQUIRED</span>').join('');
+      doc.body?.appendChild(watermark);
+    }
 
     const blockCapture = (event) => {
       event.preventDefault();
@@ -39,7 +50,7 @@ export default function PreviewModal({ html, onClose, onExport }) {
       view?.removeEventListener('keydown', blockShortcut, true);
       view?.removeEventListener('keyup', blockShortcut, true);
     };
-  }, [html]);
+  }, [html, downloadUnlocked]);
 
   useEffect(() => {
     const h = (e) => { if (e.key === 'Escape') onClose(); };
@@ -67,11 +78,18 @@ export default function PreviewModal({ html, onClose, onExport }) {
         </div>
       </div>
       <div className="modal-body">
-        <iframe
-          ref={iframeRef}
-          title="Preview"
-          style={{ width: widths[mode], height: '100%', minHeight: 500, transition: 'width 0.3s' }}
-        />
+        <div className={`modal-preview-wrap ${downloadUnlocked ? '' : 'is-watermarked'}`} style={{ width: widths[mode] }}>
+          <iframe
+            ref={iframeRef}
+            title="Preview"
+            style={{ width: '100%', height: '100%', minHeight: 500, transition: 'width 0.3s' }}
+          />
+          {!downloadUnlocked && (
+            <div className="email-watermark modal-watermark" aria-hidden="true">
+              {WATERMARK_TILES.map(i => <span key={i}>EMAILIX PREVIEW - PAID DOWNLOAD REQUIRED</span>)}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
