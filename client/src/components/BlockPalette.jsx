@@ -148,39 +148,10 @@ function ColorRow({ value, onChange }) {
 
 // ── Global Settings panel ────────────────────────────────────────
 function GlobalSettings() {
-  const { globalSettings, updateGlobalSettings: u, apiKey, setApiKey } = useEmailStore();
-  const [showKey, setShowKey] = useState(false);
+  const { globalSettings, updateGlobalSettings: u } = useEmailStore();
 
   return (
     <div className="settings-body">
-      {/* API Key */}
-      <div className="setting-field">
-        <div className="setting-label" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span>Anthropic API Key</span>
-          {apiKey && <span style={{ color: 'var(--success, #22c55e)', fontSize: 10 }}>✓ set</span>}
-        </div>
-        <div style={{ position: 'relative' }}>
-          <input
-            type={showKey ? 'text' : 'password'}
-            className="s-input"
-            value={apiKey}
-            onChange={e => setApiKey(e.target.value)}
-            placeholder="sk-ant-api03-..."
-          />
-          <button
-            onClick={() => setShowKey(v => !v)}
-            style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12 }}
-          >
-            {showKey ? '🙈' : '👁'}
-          </button>
-        </div>
-        <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 4, lineHeight: 1.4 }}>
-          Required for AI Import. Key is stored only in your browser.
-        </div>
-      </div>
-
-      <div style={{ margin: '4px -16px', borderTop: '1px solid var(--border)' }} />
-
       {/* Width slider */}
       <div className="setting-field">
         <div className="setting-label">Content Width</div>
@@ -212,7 +183,7 @@ function GlobalSettings() {
         <div className="setting-label">Global Font Family</div>
         <FontPicker
           value={globalSettings.fontFamily}
-          onChange={v => u({ fontFamily: v === 'global' ? 'Outfit' : v })}
+          onChange={v => u({ fontFamily: v === 'global' ? 'Inter' : v })}
           globalFontName={globalSettings.fontFamily}
         />
       </div>

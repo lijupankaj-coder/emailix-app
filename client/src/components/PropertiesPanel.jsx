@@ -145,7 +145,7 @@ function TitleProps({ props, update, globalSettings }) {
   return (<>
     <F label="Text Content"><Textarea value={props.content} onChange={v => update({ content: v })} rows={3} /></F>
     <F label="Font Family">
-      <FontPicker value={props.fontFamily} onChange={v => update({ fontFamily: v })} globalFontName={globalSettings?.fontFamily || 'Outfit'} />
+      <FontPicker value={props.fontFamily} onChange={v => update({ fontFamily: v })} globalFontName={globalSettings?.fontFamily || 'Inter'} />
     </F>
     <F label="Text Color"><ColorIn value={props.color} onChange={v => update({ color: v })} /></F>
     <F label="Font Size"><TextIn value={props.fontSize} onChange={v => update({ fontSize: v })} placeholder="28px" /></F>
@@ -160,7 +160,7 @@ function TextProps({ props, update, globalSettings }) {
   return (<>
     <F label="HTML Content"><Textarea value={props.content} onChange={v => update({ content: v })} rows={5} /></F>
     <F label="Font Family">
-      <FontPicker value={props.fontFamily} onChange={v => update({ fontFamily: v })} globalFontName={globalSettings?.fontFamily || 'Outfit'} />
+      <FontPicker value={props.fontFamily} onChange={v => update({ fontFamily: v })} globalFontName={globalSettings?.fontFamily || 'Inter'} />
     </F>
     <F label="Text Color"><ColorIn value={props.color} onChange={v => update({ color: v })} /></F>
     <F label="Font Size"><TextIn value={props.fontSize} onChange={v => update({ fontSize: v })} placeholder="15px" /></F>

@@ -9,10 +9,13 @@ import Toolbar from './components/Toolbar';
 import BlockPalette from './components/BlockPalette';
 import Canvas from './components/Canvas';
 import PropertiesPanel from './components/PropertiesPanel';
+import useScreenshotGuard from './hooks/useScreenshotGuard';
 
 export default function App() {
-  const { blocks, reorderBlocks, isConverting, toast } = useEmailStore();
+  const { blocks, reorderBlocks, toast, showToast } = useEmailStore();
   const [draggingId, setDraggingId] = useState(null);
+
+  useScreenshotGuard(showToast);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
@@ -46,16 +49,6 @@ export default function App() {
           </div>
         )}
       </DragOverlay>
-
-      {isConverting && (
-        <div className="converting-overlay">
-          <div className="converting-card">
-            <div className="spinner" />
-            <div style={{ fontSize: 14, fontWeight: 600 }}>Analysing with AI...</div>
-            <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>This may take 10-30 seconds</div>
-          </div>
-        </div>
-      )}
 
       {toast && (
         <div className={`toast ${toast.type}`}>

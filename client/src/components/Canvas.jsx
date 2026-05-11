@@ -24,7 +24,7 @@ export default function Canvas({ draggingId }) {
             <div className="canvas-empty" style={{ width: emailWidth }}>
               <div className="e-icon">✉</div>
               <h3>Start building your email</h3>
-              <p>Click any module on the left to add it here,<br />or import a PDF / image design.</p>
+              <p>Click any module on the left to add it here,<br />then preview and download when ready.</p>
             </div>
           ) : (
             blocks.map(block => (

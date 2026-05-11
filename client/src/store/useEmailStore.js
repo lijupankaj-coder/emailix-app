@@ -2,15 +2,25 @@ import { create } from 'zustand';
 import { createBlock } from '../utils/blockDefaults';
 
 const DRAFT_KEY = 'emailix-draft';
-const APIKEY_KEY = 'emailix-apikey';
+const LICENSE_KEY = 'emailix-license';
+const LICENSE_INFO_KEY = 'emailix-license-info';
+
+function storedJson(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
 
 export const useEmailStore = create((set, get) => ({
   blocks: [],
   selectedId: null,
-  isConverting: false,
   toast: null,
   viewMode: 'desktop',
-  apiKey: localStorage.getItem(APIKEY_KEY) || '',
+  licenseKey: localStorage.getItem(LICENSE_KEY) || '',
+  licenseInfo: storedJson(LICENSE_INFO_KEY),
   globalSettings: {
     width: 600,
     alignment: 'center',
@@ -81,11 +91,17 @@ export const useEmailStore = create((set, get) => ({
 
   updateGlobalSettings: (s) => set(state => ({ globalSettings: { ...state.globalSettings, ...s } })),
   setViewMode: (v) => set({ viewMode: v }),
-  setConverting: (v) => set({ isConverting: v }),
 
-  setApiKey: (key) => {
-    localStorage.setItem(APIKEY_KEY, key);
-    set({ apiKey: key });
+  setLicense: (key, info) => {
+    localStorage.setItem(LICENSE_KEY, key);
+    localStorage.setItem(LICENSE_INFO_KEY, JSON.stringify(info || null));
+    set({ licenseKey: key, licenseInfo: info || null });
+  },
+
+  clearLicense: () => {
+    localStorage.removeItem(LICENSE_KEY);
+    localStorage.removeItem(LICENSE_INFO_KEY);
+    set({ licenseKey: '', licenseInfo: null });
   },
 
   showToast: (message, type = 'success') => {

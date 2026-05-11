@@ -1,46 +1,19 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useEmailStore } from '../store/useEmailStore';
 import { generateMJML } from '../utils/mjmlGenerator';
 import PreviewModal from './PreviewModal';
+import PricingModal from './PricingModal';
 
 export default function Toolbar() {
   const {
-    blocks, globalSettings, viewMode, apiKey,
-    setViewMode, setConverting, setBlocks, saveDraft, showToast,
+    blocks, globalSettings, viewMode, licenseKey, licenseInfo,
+    setViewMode, clearLicense, saveDraft, showToast,
   } = useEmailStore();
 
   const [showPreview, setShowPreview] = useState(false);
   const [previewHtml, setPreviewHtml] = useState('');
-  const fileRef = useRef();
-
-  const handleImport = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    e.target.value = '';
-
-    if (!apiKey) {
-      showToast('Set your Anthropic API key in Settings (left panel, ⚙ tab)', 'error');
-      return;
-    }
-
-    setConverting(true);
-    try {
-      const form = new FormData();
-      form.append('file', file);
-      const { data } = await axios.post('/api/convert', form, {
-        headers: { 'x-api-key': apiKey },
-        timeout: 120000,
-      });
-      setBlocks(data.blocks);
-      showToast(`Imported ${data.blocks.length} blocks from ${file.name}`);
-    } catch (err) {
-      const msg = err.response?.data?.error || err.message;
-      showToast(msg, 'error');
-    } finally {
-      setConverting(false);
-    }
-  };
+  const [showPricing, setShowPricing] = useState(false);
 
   const handlePreview = async () => {
     if (!blocks.length) return showToast('Add blocks first', 'error');
@@ -56,12 +29,18 @@ export default function Toolbar() {
 
   const handleExportZip = async () => {
     if (!blocks.length) return showToast('Add blocks first', 'error');
+    if (!licenseKey) {
+      setShowPricing(true);
+      return showToast('Download requires an Emailix plan', 'error');
+    }
+
     try {
       const subject = globalSettings.subject || 'email';
       const res = await axios.post('/api/export/zip', {
         blocks,
         globalSettings,
         subject,
+        licenseKey,
       }, {
         responseType: 'blob',
         timeout: 60000,
@@ -74,9 +53,14 @@ export default function Toolbar() {
       a.download = `${safeName}.zip`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast('ZIP downloaded — check README.txt inside');
+      showToast('ZIP downloaded - check README.txt inside');
     } catch (err) {
-      showToast('Export failed: ' + err.message, 'error');
+      if (err.response?.status === 402) {
+        setShowPricing(true);
+        clearLicense();
+        return showToast('Your Emailix license is missing or expired', 'error');
+      }
+      showToast('Download failed: ' + (err.response?.data?.error || err.message), 'error');
     }
   };
 
@@ -112,19 +96,22 @@ export default function Toolbar() {
           <a className="legal-link" href="/privacy.html" target="_blank" rel="noreferrer">Privacy</a>
           <a className="legal-link" href="/terms.html" target="_blank" rel="noreferrer">Terms</a>
 
-          {/* Import Design */}
+          {licenseKey && (
+            <button className="license-chip" onClick={() => setShowPricing(true)} title="Manage download license">
+              {licenseInfo?.plan ? `${licenseInfo.plan} plan` : 'Licensed'}
+            </button>
+          )}
+
           <button
             className="btn-save"
-            onClick={() => fileRef.current?.click()}
-            title={apiKey ? 'Import PDF or Image' : 'Set API key in Settings first'}
-            style={{ opacity: apiKey ? 1 : 0.5 }}
+            onClick={() => setShowPricing(true)}
+            title="Download plans"
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              <path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
             </svg>
-            Import Design
+            Pricing
           </button>
-          <input ref={fileRef} type="file" accept="image/*,.pdf" style={{ display: 'none' }} onChange={handleImport} />
 
           {/* Preview */}
           <button className="btn-save" onClick={handlePreview}>
@@ -147,13 +134,16 @@ export default function Toolbar() {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
-            Export Template
+            Download ZIP
           </button>
         </div>
       </header>
 
       {showPreview && (
         <PreviewModal html={previewHtml} onClose={() => setShowPreview(false)} onExport={handleExportZip} />
+      )}
+      {showPricing && (
+        <PricingModal onClose={() => setShowPricing(false)} />
       )}
     </>
   );

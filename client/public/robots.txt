@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /nblx-cffe300c-ctrl
+Disallow: /nblx-cffe300c-ctrl.html
 
 Sitemap: https://emailix.nebulixcloud.com/sitemap.xml

@@ -8,6 +8,37 @@ export default function PreviewModal({ html, onClose, onExport }) {
     const doc = iframeRef.current?.contentDocument;
     if (!doc) return;
     doc.open(); doc.write(html); doc.close();
+    const style = doc.createElement('style');
+    style.textContent = 'html,body,*{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}';
+    doc.head?.appendChild(style);
+
+    const blockCapture = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    };
+    const blockShortcut = (event) => {
+      const key = String(event.key || '').toLowerCase();
+      const blocked =
+        key === 'printscreen' ||
+        ((event.metaKey || event.ctrlKey) && key === 'p') ||
+        ((event.metaKey || event.ctrlKey) && event.shiftKey && ['3', '4', '5', 's'].includes(key));
+      if (blocked) blockCapture(event);
+    };
+    const view = doc.defaultView;
+    doc.addEventListener('contextmenu', blockCapture, true);
+    doc.addEventListener('copy', blockCapture, true);
+    doc.addEventListener('cut', blockCapture, true);
+    doc.addEventListener('dragstart', blockCapture, true);
+    view?.addEventListener('keydown', blockShortcut, true);
+    view?.addEventListener('keyup', blockShortcut, true);
+    return () => {
+      doc.removeEventListener('contextmenu', blockCapture, true);
+      doc.removeEventListener('copy', blockCapture, true);
+      doc.removeEventListener('cut', blockCapture, true);
+      doc.removeEventListener('dragstart', blockCapture, true);
+      view?.removeEventListener('keydown', blockShortcut, true);
+      view?.removeEventListener('keyup', blockShortcut, true);
+    };
   }, [html]);
 
   useEffect(() => {
@@ -31,8 +62,8 @@ export default function PreviewModal({ html, onClose, onExport }) {
           ))}
         </div>
         <div className="modal-actions">
-          <button className="btn-export" onClick={onExport}>↓ Export HTML</button>
-          <button onClick={onClose} style={{ padding: '6px 12px', border: '1px solid var(--border)', borderRadius: 6, background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>✕ Close</button>
+          <button className="btn-export" onClick={onExport}>Download ZIP</button>
+          <button onClick={onClose} style={{ padding: '6px 12px', border: '1px solid var(--border)', borderRadius: 6, background: 'transparent', color: 'var(--text)', cursor: 'pointer', fontSize: 12 }}>Close</button>
         </div>
       </div>
       <div className="modal-body">

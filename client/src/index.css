@@ -213,6 +213,28 @@ input, select, textarea { font-family: inherit; color: var(--text); }
   transition: all 0.15s;
 }
 .btn-export:hover { background: var(--accent-hover); box-shadow: 0 4px 16px rgba(124,58,237,.28); }
+.btn-save:disabled,
+.btn-export:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.legal-button {
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0;
+}
+
+.license-chip {
+  border: 1px solid var(--accent-border);
+  background: var(--accent-bg);
+  color: var(--accent-hover);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
 
 /* ── Left Sidebar ────────────────────────────────────── */
 .sidebar {
@@ -776,20 +798,223 @@ input, select, textarea { font-family: inherit; color: var(--text); }
 .toast.error { border-left: 3px solid var(--danger); }
 @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ── Converting overlay ──────────────────────────────── */
-.converting-overlay {
-  position: fixed; inset: 0; background: rgba(26,27,46,.55); z-index: 200;
-  display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(6px);
+/* ── Pricing Modal ───────────────────────────────────── */
+.paywall-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(26,27,46,.58);
+  backdrop-filter: blur(8px);
 }
-.converting-card {
-  background: var(--sidebar); border: 1px solid var(--border); border-radius: 12px;
-  padding: 32px 48px; text-align: center; display: flex; flex-direction: column;
-  align-items: center; gap: 14px;
+
+.paywall-dialog {
+  width: min(760px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  background: var(--sidebar);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  padding: 22px;
 }
-.spinner {
-  width: 36px; height: 36px; border: 3px solid var(--border);
-  border-top-color: var(--accent); border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+
+.paywall-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+
+.paywall-head h2 {
+  font-size: 22px;
+  font-weight: 750;
+  line-height: 1.12;
+}
+
+.paywall-kicker {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.paywall-close {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--sidebar);
+  color: var(--text-muted);
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.plan-card {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  padding: 18px;
+  min-height: 214px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.plan-card h3 {
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.plan-card p {
+  color: var(--text-muted);
+  line-height: 1.45;
+  min-height: 38px;
+}
+
+.plan-card .btn-export {
+  justify-content: center;
+  margin-top: auto;
+}
+
+.plan-badge {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  border-radius: 999px;
+  background: #111827;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.plan-price span {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.plan-price small {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.license-panel {
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  background: var(--sidebar);
+}
+
+.license-panel h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.license-panel p,
+.license-note {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.license-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.license-row input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--input-border);
+  border-radius: 7px;
+  background: var(--input-bg);
+  color: var(--text);
+  padding: 8px 10px;
+  font-size: 12px;
+  outline: none;
+}
+
+.license-row input:focus {
+  border-color: var(--input-focus);
+}
+
+.license-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.license-error {
+  color: var(--danger);
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+body.screenshot-warning .app::after {
+  content: "Screen capture is disabled for Emailix previews.";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26,27,46,.78);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+  padding: 24px;
+  pointer-events: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  body::before {
+    content: "Printing and screenshots are disabled for Emailix previews.";
+    visibility: visible;
+    display: block;
+    padding: 32px;
+    color: #111827;
+    font: 700 18px Inter, Arial, sans-serif;
+  }
+}
+
+@media (max-width: 900px) {
+  .header { gap: 8px; padding: 0 10px; }
+  .brand-sub, .header-center { display: none; }
+  .header-right { gap: 6px; }
+  .legal-link, .license-chip { display: none; }
+  .btn-save, .btn-export { padding: 7px 9px; }
+}
+
+@media (max-width: 640px) {
+  .plan-grid { grid-template-columns: 1fr; }
+  .license-row { flex-direction: column; }
+  .paywall-dialog { padding: 18px; }
+}

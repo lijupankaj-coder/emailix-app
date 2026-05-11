@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Emailix Admin</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f8fc;
+        --panel: #ffffff;
+        --text: #1a1b2e;
+        --muted: #6f7287;
+        --border: #e2e4ee;
+        --accent: #7c3aed;
+        --accent-dark: #5b21b6;
+        --danger: #dc2626;
+        --success: #059669;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 14px;
+      }
+      header {
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--border);
+      }
+      .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; }
+      .mark {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+        color: #fff;
+      }
+      main {
+        width: min(1120px, calc(100% - 32px));
+        margin: 28px auto;
+      }
+      .top {
+        display: grid;
+        grid-template-columns: 1.1fr .9fr;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 18px;
+        box-shadow: 0 4px 20px rgba(26,27,46,.05);
+      }
+      h1, h2, h3, p { margin: 0; }
+      h1 { font-size: 24px; margin-bottom: 8px; }
+      h2 { font-size: 16px; margin-bottom: 12px; }
+      p { color: var(--muted); line-height: 1.45; }
+      .price-row { display: flex; gap: 10px; margin-top: 14px; }
+      .price {
+        flex: 1;
+        padding: 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: #f9fafc;
+      }
+      .price strong { display: block; font-size: 26px; margin-top: 6px; }
+      label { display: block; color: var(--muted); font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+      input, select {
+        width: 100%;
+        height: 40px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0 10px;
+        color: var(--text);
+        background: #fff;
+        font: inherit;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 160px auto;
+        align-items: end;
+        gap: 10px;
+      }
+      button {
+        height: 40px;
+        border: none;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        padding: 0 14px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      button.secondary {
+        background: #ede9fe;
+        color: var(--accent-dark);
+      }
+      button.danger {
+        background: #fee2e2;
+        color: var(--danger);
+      }
+      button:disabled { opacity: .6; cursor: not-allowed; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      th, td {
+        text-align: left;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+      }
+      th {
+        background: #f0f1f7;
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+      }
+      tr:last-child td { border-bottom: none; }
+      code {
+        display: inline-block;
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        font-size: 12px;
+        background: #f0f1f7;
+        padding: 5px 7px;
+        border-radius: 6px;
+      }
+      .status {
+        display: inline-flex;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+      .active { background: #dcfce7; color: var(--success); }
+      .revoked { background: #fee2e2; color: var(--danger); }
+      .expired { background: #fef3c7; color: #92400e; }
+      .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+      #message { margin-top: 12px; min-height: 20px; color: var(--muted); }
+      @media (max-width: 860px) {
+        header { padding: 0 16px; }
+        .top { grid-template-columns: 1fr; }
+        .form-grid { grid-template-columns: 1fr; }
+        table { display: block; overflow-x: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand"><div class="mark">Ei</div><div>Emailix Admin</div></div>
+      <a href="/" style="color: var(--accent); font-weight: 700; text-decoration: none;">Open builder</a>
+    </header>
+
+    <main>
+      <div class="top">
+        <section class="panel">
+          <h1>Download licenses</h1>
+          <p>Users can build and preview emailers for free. ZIP downloads require an active Emailix license.</p>
+          <div class="price-row">
+            <div class="price">Monthly<strong>$29</strong></div>
+            <div class="price">Yearly<strong>$199</strong></div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Create license key</h2>
+          <form id="license-form" class="form-grid">
+            <div>
+              <label for="email">Customer email</label>
+              <input id="email" name="email" type="email" placeholder="customer@example.com" required>
+            </div>
+            <div>
+              <label for="plan">Plan</label>
+              <select id="plan" name="plan">
+                <option value="monthly">Monthly - $29</option>
+                <option value="yearly">Yearly - $199</option>
+              </select>
+            </div>
+            <button type="submit">Create</button>
+          </form>
+          <div id="message" aria-live="polite"></div>
+        </section>
+      </div>
+
+      <section>
+        <table>
+          <thead>
+            <tr>
+              <th>License</th>
+              <th>Email</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th>Expires</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="licenses">
+            <tr><td colspan="6">Loading licenses...</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script>
+      const tbody = document.getElementById('licenses');
+      const form = document.getElementById('license-form');
+      const message = document.getElementById('message');
+
+      function escapeHtml(value) {
+        return String(value || '').replace(/[&<>"']/g, char => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[char]));
+      }
+
+      function formatDate(value) {
+        if (!value) return '-';
+        return new Date(value).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      }
+
+      function derivedStatus(license) {
+        if (license.status !== 'active') return license.status;
+        return new Date(license.expiresAt) < new Date() ? 'expired' : 'active';
+      }
+
+      async function api(path, options = {}) {
+        const res = await fetch(path, {
+          ...options,
+          headers: {
+            'Content-Type': 'application/json',
+            ...(options.headers || {})
+          }
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Request failed');
+        return data;
+      }
+
+      async function loadLicenses() {
+        try {
+          const data = await api('/api/admin/licenses');
+          const licenses = data.licenses || [];
+          if (!licenses.length) {
+            tbody.innerHTML = '<tr><td colspan="6">No licenses created yet.</td></tr>';
+            return;
+          }
+          tbody.innerHTML = licenses.map(license => {
+            const status = derivedStatus(license);
+            const nextStatus = license.status === 'active' ? 'revoked' : 'active';
+            const actionLabel = license.status === 'active' ? 'Revoke' : 'Reactivate';
+            return `
+              <tr>
+                <td><code>${escapeHtml(license.key)}</code></td>
+                <td>${escapeHtml(license.email)}</td>
+                <td>${escapeHtml(license.plan)} ($${license.price})</td>
+                <td><span class="status ${escapeHtml(status)}">${escapeHtml(status)}</span></td>
+                <td>${formatDate(license.expiresAt)}</td>
+                <td>
+                  <div class="actions">
+                    <button class="secondary" data-copy="${escapeHtml(license.key)}">Copy</button>
+                    <button class="${nextStatus === 'active' ? 'secondary' : 'danger'}" data-key="${escapeHtml(license.key)}" data-status="${nextStatus}">${actionLabel}</button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        } catch (err) {
+          tbody.innerHTML = `<tr><td colspan="6">${escapeHtml(err.message)}</td></tr>`;
+        }
+      }
+
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const submit = form.querySelector('button[type="submit"]');
+        submit.disabled = true;
+        message.textContent = '';
+        try {
+          const payload = {
+            email: form.email.value.trim(),
+            plan: form.plan.value
+          };
+          const data = await api('/api/admin/licenses', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+          });
+          message.textContent = `Created ${data.license.key}`;
+          form.reset();
+          await loadLicenses();
+        } catch (err) {
+          message.textContent = err.message;
+        } finally {
+          submit.disabled = false;
+        }
+      });
+
+      tbody.addEventListener('click', async event => {
+        const copyKey = event.target.dataset.copy;
+        if (copyKey) {
+          await navigator.clipboard.writeText(copyKey);
+          message.textContent = 'License key copied.';
+          return;
+        }
+
+        const key = event.target.dataset.key;
+        const status = event.target.dataset.status;
+        if (!key || !status) return;
+        event.target.disabled = true;
+        try {
+          await api(`/api/admin/licenses/${encodeURIComponent(key)}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ status })
+          });
+          message.textContent = `License ${status}.`;
+          await loadLicenses();
+        } catch (err) {
+          message.textContent = err.message;
+        } finally {
+          event.target.disabled = false;
+        }
+      });
+
+      loadLicenses();
+    </script>
+  </body>
+</html>
