@@ -14,7 +14,7 @@ export default function Canvas({ draggingId }) {
     >
       <div className="canvas-scroll">
         <div
-          className="canvas-email"
+          className={`canvas-email ${viewMode === 'mobile' ? 'canvas-email-mobile' : ''}`}
           style={{
             width: emailWidth,
             background: globalSettings.emailAreaColor || '#ffffff',

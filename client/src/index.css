@@ -388,6 +388,8 @@ input, select, textarea { font-family: inherit; color: var(--text); }
   font-size: 12px;
   font-weight: 500;
   color: var(--text-muted);
+  line-height: 1.25;
+  min-width: 0;
 }
 .row-card:hover .row-label { color: var(--text); }
 
@@ -523,6 +525,25 @@ input, select, textarea { font-family: inherit; color: var(--text); }
 .canvas-empty .e-icon { font-size: 40px; opacity: 0.3; }
 .canvas-empty h3 { font-size: 15px; color: #aaa; font-weight: 500; }
 .canvas-empty p { font-size: 13px; color: #bbb; }
+
+.email-columns {
+  width: 100%;
+}
+
+.email-column {
+  min-width: 0;
+}
+
+.canvas-email-mobile .email-columns {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.canvas-email-mobile .email-column {
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
 
 /* ── Canvas Block Wrapper ────────────────────────────── */
 .block-wrap {
@@ -1028,6 +1049,37 @@ body.screenshot-warning .modal-preview-wrap {
 }
 
 @media (max-width: 640px) {
+  .row-card {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 118px;
+    text-align: center;
+  }
+
+  .row-preview {
+    width: min(140px, 100%);
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .row-label {
+    font-size: 13px;
+  }
+
+  .email-columns {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .email-column {
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
   .plan-grid { grid-template-columns: 1fr; }
   .license-row { flex-direction: column; }
   .paywall-dialog { padding: 18px; }

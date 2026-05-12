@@ -6,10 +6,11 @@ export default function ColumnsBlock({ props, globalSettings }) {
       backgroundColor: bgColor || globalSettings.emailAreaColor || '#ffffff',
       paddingTop, paddingBottom, paddingLeft, paddingRight,
     }}>
-      <div style={{ display: 'flex' }}>
+      <div className="email-columns" style={{ display: 'flex' }}>
         {columns.map((col, i) => (
           <div
             key={i}
+            className="email-column"
             style={{
               width: col.width,
               backgroundColor: col.bgColor || 'transparent',
