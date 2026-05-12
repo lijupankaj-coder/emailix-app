@@ -4,6 +4,12 @@ const path = require('path');
 
 const storePath = process.env.LICENSE_STORE_PATH || path.join(__dirname, '../data/licenses.json');
 
+const PLAN_CONFIG = {
+  monthly: { price: 29 },
+  yearly: { price: 199 },
+  super_admin: { price: 0, expiresAt: null },
+};
+
 function ensureStore() {
   fs.mkdirSync(path.dirname(storePath), { recursive: true });
   if (!fs.existsSync(storePath)) {
@@ -38,7 +44,16 @@ function generateKey() {
   return `EIX-${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8, 12)}-${raw.slice(12, 18)}`;
 }
 
+function normalizePlan(plan) {
+  const normalized = String(plan || '').trim().toLowerCase().replace(/[\s-]+/g, '_');
+  if (normalized === 'super_admin' || normalized === 'lifetime' || normalized === 'forever') return 'super_admin';
+  if (normalized === 'yearly') return 'yearly';
+  return 'monthly';
+}
+
 function expiryForPlan(plan, start = new Date()) {
+  if (PLAN_CONFIG[plan]?.expiresAt === null) return null;
+
   const expires = new Date(start);
   if (plan === 'yearly') expires.setFullYear(expires.getFullYear() + 1);
   else expires.setMonth(expires.getMonth() + 1);
@@ -54,7 +69,7 @@ function listLicenses() {
 }
 
 function createLicense({ email = '', plan = 'monthly' }) {
-  const cleanPlan = plan === 'yearly' ? 'yearly' : 'monthly';
+  const cleanPlan = normalizePlan(plan);
   const store = readStore();
   let key = generateKey();
   while (store.licenses.some(license => license.key === key)) key = generateKey();
@@ -64,7 +79,7 @@ function createLicense({ email = '', plan = 'monthly' }) {
     key,
     email: String(email || '').trim(),
     plan: cleanPlan,
-    price: cleanPlan === 'yearly' ? 199 : 29,
+    price: PLAN_CONFIG[cleanPlan]?.price ?? 29,
     status: 'active',
     createdAt: now.toISOString(),
     expiresAt: expiryForPlan(cleanPlan, now),

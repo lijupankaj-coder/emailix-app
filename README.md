@@ -35,6 +35,7 @@ Download plans:
 
 - Monthly: `$29`
 - Yearly: `$199`
+- Internal Super Admin: non-expiring access, created from the admin page when needed
 
 Admin page:
 

@@ -178,6 +178,7 @@
           <div class="price-row">
             <div class="price">Monthly<strong>$29</strong></div>
             <div class="price">Yearly<strong>$199</strong></div>
+            <div class="price">Super Admin<strong>Forever</strong></div>
           </div>
         </section>
 
@@ -193,6 +194,7 @@
               <select id="plan" name="plan">
                 <option value="monthly">Monthly - $29</option>
                 <option value="yearly">Yearly - $199</option>
+                <option value="super_admin">Super Admin - Forever</option>
               </select>
             </div>
             <button type="submit">Create</button>
@@ -236,13 +238,23 @@
       }
 
       function formatDate(value) {
-        if (!value) return '-';
+        if (!value) return 'Never';
         return new Date(value).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
       }
 
       function derivedStatus(license) {
         if (license.status !== 'active') return license.status;
+        if (!license.expiresAt) return 'active';
         return new Date(license.expiresAt) < new Date() ? 'expired' : 'active';
+      }
+
+      function planLabel(license) {
+        if (license.plan === 'super_admin') return 'Super Admin';
+        return license.plan;
+      }
+
+      function priceLabel(license) {
+        return Number(license.price) > 0 ? ` ($${license.price})` : '';
       }
 
       async function api(path, options = {}) {
@@ -274,7 +286,7 @@
               <tr>
                 <td><code>${escapeHtml(license.key)}</code></td>
                 <td>${escapeHtml(license.email)}</td>
-                <td>${escapeHtml(license.plan)} ($${license.price})</td>
+                <td>${escapeHtml(planLabel(license))}${escapeHtml(priceLabel(license))}</td>
                 <td><span class="status ${escapeHtml(status)}">${escapeHtml(status)}</span></td>
                 <td>${formatDate(license.expiresAt)}</td>
                 <td>

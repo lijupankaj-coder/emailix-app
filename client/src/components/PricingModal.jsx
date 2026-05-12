@@ -20,6 +20,11 @@ const PLANS = [
   },
 ];
 
+function licensePlanLabel(plan) {
+  if (plan === 'super_admin') return 'Super Admin';
+  return plan;
+}
+
 export default function PricingModal({ onClose }) {
   const { licenseKey, licenseInfo, setLicense, clearLicense, showToast } = useEmailStore();
   const [inputKey, setInputKey] = useState(licenseKey || '');
@@ -97,8 +102,8 @@ export default function PricingModal({ onClose }) {
           </div>
           {licenseInfo?.plan && (
             <div className="license-note">
-              Active {licenseInfo.plan} license. Downloads remain available
-              {licenseInfo.expiresAt ? ` until ${new Date(licenseInfo.expiresAt).toLocaleDateString()}` : ' while this key remains active'}.
+              Active {licensePlanLabel(licenseInfo.plan)} license. Downloads remain available
+              {licenseInfo.expiresAt ? ` until ${new Date(licenseInfo.expiresAt).toLocaleDateString()}` : ' forever while this key remains active'}.
               <button type="button" className="legal-button" onClick={clearLicense}>Remove key</button>
             </div>
           )}

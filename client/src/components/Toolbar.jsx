@@ -5,6 +5,11 @@ import { generateMJML } from '../utils/mjmlGenerator';
 import PreviewModal from './PreviewModal';
 import PricingModal from './PricingModal';
 
+function licensePlanLabel(plan) {
+  if (plan === 'super_admin') return 'Super Admin';
+  return plan;
+}
+
 export default function Toolbar() {
   const {
     blocks, globalSettings, viewMode, licenseKey, licenseInfo,
@@ -98,7 +103,7 @@ export default function Toolbar() {
 
           {licenseKey && (
             <button className="license-chip" onClick={() => setShowPricing(true)} title="Manage download license">
-              {licenseInfo?.plan ? `${licenseInfo.plan} plan` : 'Licensed'}
+              {licenseInfo?.plan ? `${licensePlanLabel(licenseInfo.plan)} plan` : 'Licensed'}
             </button>
           )}
 
