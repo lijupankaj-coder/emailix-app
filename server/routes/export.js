@@ -20,7 +20,7 @@ router.post('/', (req, res) => {
   }
 });
 
-// ── ZIP export with assets folder ─────────────────────────────────
+// ── ZIP export with HTML and images folder ────────────────────────
 router.post('/zip', express.json({ limit: '150mb' }), async (req, res) => {
   const { blocks = [], globalSettings = {}, subject = 'email', licenseKey = '' } = req.body;
   const key = licenseKey || req.headers['x-license-key'];
@@ -36,27 +36,7 @@ router.post('/zip', express.json({ limit: '150mb' }), async (req, res) => {
   }
 
   try {
-    const assets = [];
-
-    // Deep-clone blocks and extract base64 images into asset files
-    const processedBlocks = JSON.parse(JSON.stringify(blocks)).map(block => {
-      const imageProps = getImageProps(block.type);
-      for (const propKey of imageProps) {
-        const val = block.props[propKey];
-        if (val && val.startsWith('data:')) {
-          const match = val.match(/^data:([^;]+);base64,(.+)$/s);
-          if (match) {
-            const mime = match[1];
-            const ext = mime.split('/')[1].replace('jpeg', 'jpg').split('+')[0].split(';')[0];
-            const n = assets.length + 1;
-            const filename = `image-${n}.${ext}`;
-            assets.push({ filename, buffer: Buffer.from(match[2], 'base64') });
-            block.props[propKey] = `assets/${filename}`;
-          }
-        }
-      }
-      return block;
-    });
+    const { processedBlocks, images } = prepareBlocksForZip(blocks);
 
     // Generate and compile MJML
     const mjml = generateMJML(processedBlocks, globalSettings);
@@ -73,9 +53,10 @@ router.post('/zip', express.json({ limit: '150mb' }), async (req, res) => {
     archive.pipe(res);
 
     archive.append(html, { name: `${safeName}.html` });
+    archive.append('', { name: 'images/' });
 
-    for (const asset of assets) {
-      archive.append(asset.buffer, { name: `assets/${asset.filename}` });
+    for (const image of images) {
+      archive.append(image.buffer, { name: `images/${image.filename}` });
     }
 
     // Add a readme
@@ -85,14 +66,14 @@ Plan: ${access.license.plan}
 
 Files:
   ${safeName}.html   - The email HTML file
-  assets/            - Image assets referenced in the email
+  images/            - Uploaded image assets referenced by the HTML
 
 To use:
-  1. Upload the assets/ folder to your server or CDN
-  2. Update image src paths in ${safeName}.html to point to your hosted URLs
-  3. Or keep the assets/ folder alongside the HTML for local preview
+  1. Keep ${safeName}.html and the images/ folder together when importing
+  2. Upload the images/ folder to your email broadcaster, CDN, or server
+  3. If your broadcaster does not support relative image paths, replace images/... paths in ${safeName}.html with the hosted image URLs
 
-Note: Open ${safeName}.html in a browser to preview the email.
+Note: Uploaded images are packaged locally. External image URLs stay unchanged.
 `;
     archive.append(readme, { name: 'README.txt' });
 
@@ -105,13 +86,41 @@ Note: Open ${safeName}.html in a browser to preview the email.
   }
 });
 
-function getImageProps(type) {
-  const map = {
-    logo: ['src'],
-    image: ['src'],
-    video: ['thumbnailSrc'],
-  };
-  return map[type] || [];
+function prepareBlocksForZip(blocks) {
+  const images = [];
+  const seenImages = new Map();
+  const processedBlocks = replaceDataImages(JSON.parse(JSON.stringify(blocks)), images, seenImages);
+  return { processedBlocks, images };
+}
+
+function replaceDataImages(value, images, seenImages) {
+  if (typeof value === 'string') return replaceDataImageStrings(value, images, seenImages);
+  if (Array.isArray(value)) return value.map(item => replaceDataImages(item, images, seenImages));
+  if (value && typeof value === 'object') {
+    for (const key of Object.keys(value)) {
+      value[key] = replaceDataImages(value[key], images, seenImages);
+    }
+  }
+  return value;
+}
+
+function replaceDataImageStrings(value, images, seenImages) {
+  return value.replace(/data:image\/([a-z0-9.+-]+);base64,([a-z0-9+/=]+)/gi, (match, subtype, base64) => {
+    if (seenImages.has(match)) return `images/${seenImages.get(match)}`;
+
+    const filename = `image-${images.length + 1}.${extensionForImageSubtype(subtype)}`;
+    seenImages.set(match, filename);
+    images.push({ filename, buffer: Buffer.from(base64, 'base64') });
+    return `images/${filename}`;
+  });
+}
+
+function extensionForImageSubtype(subtype) {
+  const normalized = String(subtype || '').toLowerCase();
+  if (normalized === 'jpeg' || normalized === 'pjpeg') return 'jpg';
+  if (normalized === 'svg+xml') return 'svg';
+  if (normalized === 'x-icon' || normalized === 'vnd.microsoft.icon') return 'ico';
+  return normalized.split('+')[0].replace(/[^a-z0-9]/g, '') || 'png';
 }
 
 module.exports = router;
