@@ -1,0 +1,295 @@
+/* ── Canvas ──────────────────────────────────────────── */
+.canvas-area {
+  flex: 1;
+  background: var(--canvas-bg);
+  overflow: auto;
+  position: relative;
+}
+
+.canvas-scroll {
+  min-height: 100%;
+  padding: 42px 28px 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.canvas-email {
+  background: var(--email-bg);
+  box-shadow: var(--shadow-lg);
+  border-radius: 2px;
+  min-height: 200px;
+  position: relative;
+  transition: width 0.3s;
+  overflow: hidden;
+  zoom: 1.06;
+}
+
+.canvas-empty {
+  min-height: 430px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  text-align: center;
+  gap: 10px;
+  border: 2px dashed #e5e7eb;
+  border-radius: 2px;
+}
+
+.canvas-empty .e-icon { font-size: 40px; opacity: 0.3; }
+.canvas-empty h3 { font-size: 15px; color: #aaa; font-weight: 500; }
+.canvas-empty p { font-size: 13px; color: #bbb; }
+
+.email-columns {
+  width: 100%;
+}
+
+.email-column {
+  min-width: 0;
+}
+
+.canvas-email-mobile .email-columns {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.canvas-email-mobile .email-column {
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* ── Canvas Block Wrapper ────────────────────────────── */
+.block-wrap {
+  position: relative;
+  cursor: pointer;
+  transition: outline 0.1s;
+}
+.block-wrap:hover { outline: 1px dashed var(--accent-border); }
+.block-wrap.selected { outline: 2px solid var(--accent) !important; }
+.block-wrap.dragging { opacity: 0.35; }
+
+.block-wrap:hover .blk-toolbar,
+.block-wrap.selected .blk-toolbar { opacity: 1; }
+
+.blk-toolbar {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  display: flex;
+  gap: 1px;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.15s;
+  background: var(--accent);
+  border-radius: 0 0 0 6px;
+  overflow: hidden;
+}
+
+.blk-btn {
+  width: 30px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.85);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s;
+}
+.blk-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.blk-btn.del:hover { background: #ef4444; color: #fff; }
+
+.blk-drag-handle {
+  position: absolute;
+  top: 50%;
+  left: -24px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  cursor: grab;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  background: white;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.1);
+}
+.block-wrap:hover .blk-drag-handle,
+.block-wrap.selected .blk-drag-handle { opacity: 1; }
+.blk-drag-handle:active { cursor: grabbing; }
+
+/* ── Right Properties Panel ──────────────────────────── */
+.props-panel {
+  width: 250px;
+  flex-shrink: 0;
+  background: var(--sidebar);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.props-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.props-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.props-close {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.1s;
+}
+.props-close:hover { background: var(--card); color: var(--text); }
+
+.props-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.props-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+.props-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  color: var(--text-dim);
+  gap: 8px;
+  padding: 20px;
+}
+.props-empty .icon { font-size: 30px; opacity: 0.3; }
+
+/* ── Property fields ─────────────────────────────────── */
+.pf { margin-bottom: 12px; }
+.pf-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.pf-input {
+  width: 100%;
+  padding: 8px 11px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.pf-input:focus { border-color: var(--input-focus); }
+.pf-input::placeholder { color: var(--text-dim); }
+
+.pf-textarea { resize: vertical; min-height: 68px; line-height: 1.5; }
+
+.pf-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+  cursor: pointer;
+}
+
+/* Color field */
+.pf-color-row {
+  display: flex;
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--input-bg);
+  transition: border-color 0.15s;
+}
+.pf-color-row:focus-within { border-color: var(--input-focus); }
+
+.pf-color-swatch {
+  width: 40px;
+  height: 38px;
+  padding: 4px;
+  border: none;
+  background: var(--input-bg);
+  cursor: pointer;
+  flex-shrink: 0;
+  border-right: 1px solid var(--input-border);
+}
+
+.pf-color-text {
+  flex: 1;
+  padding: 8px 9px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  font-family: 'Inter', monospace;
+  min-width: 0;
+}
+
+/* Padding grid */
+.padding-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.padding-cell { display: flex; flex-direction: column; gap: 3px; }
+.padding-cell-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); }
+.padding-cell input {
+  width: 100%;
+  padding: 7px 9px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 5px;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+.padding-cell input:focus { border-color: var(--input-focus); }
+
+.props-divider {
+  margin: 12px -14px;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
