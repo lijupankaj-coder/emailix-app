@@ -3,11 +3,10 @@ const fs = require('fs');
 const path = require('path');
 
 const storePath = process.env.LICENSE_STORE_PATH || path.join(__dirname, '../data/licenses.json');
-
 const PLAN_CONFIG = {
-  monthly: { price: 29 },
-  yearly: { price: 199 },
-  super_admin: { price: 0, expiresAt: null },
+  pro: { id: 'pro', price: 15, durationMonths: 1 },
+  team: { id: 'team', price: 39, durationMonths: 1 },
+  super_admin: { id: 'super_admin', price: 0, expiresAt: null },
 };
 
 function ensureStore() {
@@ -47,16 +46,19 @@ function generateKey() {
 function normalizePlan(plan) {
   const normalized = String(plan || '').trim().toLowerCase().replace(/[\s-]+/g, '_');
   if (normalized === 'super_admin' || normalized === 'lifetime' || normalized === 'forever') return 'super_admin';
-  if (normalized === 'yearly') return 'yearly';
-  return 'monthly';
+  if (normalized === 'team' || normalized === 'yearly') return 'team';
+  return 'pro';
+}
+
+function getPlanConfig(plan) {
+  return PLAN_CONFIG[normalizePlan(plan)] || PLAN_CONFIG.pro;
 }
 
 function expiryForPlan(plan, start = new Date()) {
-  if (PLAN_CONFIG[plan]?.expiresAt === null) return null;
-
+  const config = getPlanConfig(plan);
+  if (config.expiresAt === null) return null;
   const expires = new Date(start);
-  if (plan === 'yearly') expires.setFullYear(expires.getFullYear() + 1);
-  else expires.setMonth(expires.getMonth() + 1);
+  expires.setMonth(expires.getMonth() + (config.durationMonths ?? 1));
   return expires.toISOString();
 }
 
@@ -68,8 +70,9 @@ function listLicenses() {
   return readStore().licenses.sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
 }
 
-function createLicense({ email = '', plan = 'monthly' }) {
+function createLicense({ email = '', plan = 'pro' }) {
   const cleanPlan = normalizePlan(plan);
+  const planConfig = getPlanConfig(cleanPlan);
   const store = readStore();
   let key = generateKey();
   while (store.licenses.some(license => license.key === key)) key = generateKey();
@@ -79,7 +82,7 @@ function createLicense({ email = '', plan = 'monthly' }) {
     key,
     email: String(email || '').trim(),
     plan: cleanPlan,
-    price: PLAN_CONFIG[cleanPlan]?.price ?? 29,
+    price: planConfig.price,
     status: 'active',
     createdAt: now.toISOString(),
     expiresAt: expiryForPlan(cleanPlan, now),

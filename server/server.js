@@ -30,8 +30,8 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     downloads: 'paid',
-    monthlyPrice: 29,
-    yearlyPrice: 199,
+    proPrice: 15,
+    teamPrice: 39,
     adminConfigured: true,
     adminUrl: '/nblx-cffe300c-ctrl.html',
   });

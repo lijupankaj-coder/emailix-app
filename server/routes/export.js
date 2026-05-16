@@ -29,8 +29,8 @@ router.post('/zip', express.json({ limit: '150mb' }), async (req, res) => {
     return res.status(402).json({
       error: access.reason || 'A paid Emailix license is required to download templates.',
       plans: [
-        { id: 'monthly', price: 29, label: 'Monthly' },
-        { id: 'yearly', price: 199, label: 'Yearly' },
+        { id: 'pro', price: 15, label: 'Pro' },
+        { id: 'team', price: 39, label: 'Team' },
       ],
     });
   }
