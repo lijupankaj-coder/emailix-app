@@ -6,6 +6,8 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 const exportRoute = require('./routes/export');
 const licenseRoute = require('./routes/license');
+const sendRoute = require('./routes/send');
+const { mailConfig } = require('./services/mailer');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -24,6 +26,7 @@ app.use(cors({
 app.use(express.json({ limit: '50mb' }));
 
 app.use('/api/export', exportRoute);
+app.use('/api/send', sendRoute);
 app.use('/api', licenseRoute);
 
 app.get('/api/health', (req, res) => {
@@ -34,6 +37,7 @@ app.get('/api/health', (req, res) => {
     teamPrice: 39,
     adminConfigured: true,
     adminUrl: '/nblx-cffe300c-ctrl.html',
+    smtpConfigured: mailConfig().configured,
   });
 });
 

@@ -4,6 +4,8 @@ import { useEmailStore } from '../store/useEmailStore';
 import { generateMJML } from '../utils/mjmlGenerator';
 import PreviewModal from './PreviewModal';
 import PricingModal from './PricingModal';
+import SendModal from './SendModal';
+import { hasActiveLicense } from '../utils/licenseAccess';
 
 function licensePlanLabel(plan) {
   if (plan === 'super_admin') return 'Super Admin';
@@ -19,6 +21,7 @@ export default function Toolbar() {
   const [showPreview, setShowPreview] = useState(false);
   const [previewHtml, setPreviewHtml] = useState('');
   const [showPricing, setShowPricing] = useState(false);
+  const [showSend, setShowSend] = useState(false);
 
   const handlePreview = async () => {
     if (!blocks.length) return showToast('Add blocks first', 'error');
@@ -67,6 +70,15 @@ export default function Toolbar() {
       }
       showToast('Download failed: ' + (err.response?.data?.error || err.message), 'error');
     }
+  };
+
+  const handleOpenSend = () => {
+    if (!blocks.length) return showToast('Add blocks first', 'error');
+    if (!hasActiveLicense(licenseKey, licenseInfo)) {
+      setShowPricing(true);
+      return showToast('Email sending is for paid members only', 'error');
+    }
+    setShowSend(true);
   };
 
   return (
@@ -134,6 +146,13 @@ export default function Toolbar() {
             Save Draft
           </button>
 
+          <button className="btn-save" onClick={handleOpenSend} title="Send to multiple recipients">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+            Send
+          </button>
+
           {/* Export ZIP */}
           <button className="btn-export" onClick={handleExportZip}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -153,6 +172,19 @@ export default function Toolbar() {
       )}
       {showPricing && (
         <PricingModal onClose={() => setShowPricing(false)} />
+      )}
+      {showSend && (
+        <SendModal
+          blocks={blocks}
+          globalSettings={globalSettings}
+          licenseKey={licenseKey}
+          onClose={() => setShowSend(false)}
+          onRequireLicense={() => {
+            setShowSend(false);
+            setShowPricing(true);
+          }}
+          showToast={showToast}
+        />
       )}
     </>
   );
