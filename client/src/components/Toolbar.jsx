@@ -110,8 +110,12 @@ export default function Toolbar() {
         </div>
 
         <div className="header-right">
-          <a className="legal-link" href="/privacy.html" target="_blank" rel="noreferrer">Privacy</a>
           <a className="legal-link" href="/terms.html" target="_blank" rel="noreferrer">Terms</a>
+          <a className="legal-link" href="/privacy.html" target="_blank" rel="noreferrer">Privacy</a>
+          <a className="legal-link" href="/cookies.html" target="_blank" rel="noreferrer">Cookies</a>
+          <a className="legal-link" href="/refund.html" target="_blank" rel="noreferrer">Refund</a>
+          <a className="legal-link" href="/subscription.html" target="_blank" rel="noreferrer">Subscription</a>
+          <a className="legal-link" href="/dpa.html" target="_blank" rel="noreferrer">DPA</a>
 
           {licenseKey && (
             <button className="license-chip" onClick={() => setShowPricing(true)} title="Manage download license">
