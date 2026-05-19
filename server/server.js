@@ -33,8 +33,8 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     downloads: 'paid',
-    proPrice: 15,
-    teamPrice: 39,
+    proPrice: 9,
+    teamPrice: 89,
     adminConfigured: true,
     adminUrl: '/nblx-cffe300c-ctrl.html',
     smtpConfigured: mailConfig().configured,

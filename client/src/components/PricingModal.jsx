@@ -5,18 +5,18 @@ import { useEmailStore } from '../store/useEmailStore';
 const PLANS = [
   {
     id: 'pro',
-    label: 'Pro',
-    price: '$15',
+    label: 'Monthly',
+    price: '$9',
     cadence: '/ month',
-    note: 'Best for individual builders exporting client-ready ZIP files.',
+    note: 'All features. Export unlimited client-ready ZIP files monthly.',
   },
   {
     id: 'team',
-    label: 'Team',
-    price: '$39',
-    cadence: '/ month',
-    note: 'Best for teams producing regular email campaigns.',
-    badge: 'Team plan',
+    label: 'Yearly',
+    price: '$89',
+    cadence: '/ year',
+    note: 'All features. Best value — save over 17% with annual billing.',
+    badge: 'Best value',
   },
 ];
 
